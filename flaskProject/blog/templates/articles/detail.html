@@ -10,7 +10,7 @@
             Text: {{ article_text }}
         </ul>
         <ul>
-            Author: <a href="{{ url_for('user.get_user', pk=user_id) }}">{{ article_author }} </a>
+            Author: <a href="{{ url_for('user.profile', pk=user_id) }}">{{ article_author }} </a>
         </ul>
     </div>
 {% endblock %}
