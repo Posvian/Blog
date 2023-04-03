@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template
+from flask_login import login_required
 
-from blog.user.views import USERS
+from blog.models import User
 
 article = Blueprint('article', __name__, url_prefix='/articles', static_folder='../static')
 
@@ -21,6 +22,7 @@ ARTICLES = {
 
 
 @article.route('/')
+@login_required
 def article_list():
     return render_template(
         'articles/list.html',
@@ -33,7 +35,10 @@ def get_article(pk: int):
     article_title = ARTICLES[pk]['title']
     article_text = ARTICLES[pk]['text']
     user_id = ARTICLES[pk]['author']
-    article_author = USERS[ARTICLES[pk]['author']]
+    # article_author = USERS[ARTICLES[pk]['author']]
+    article_author = User.query.filter_by(id=ARTICLES[pk]['author']).one_or_none()
+    if not article_author:
+        article_author = 'Автор неизвестен'
     return render_template(
         'articles/detail.html',
         article_title=article_title,
