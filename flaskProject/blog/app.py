@@ -1,20 +1,20 @@
 from flask import Flask
 from flask_login import LoginManager
-
+from flask_migrate import Migrate
 from blog.models.database import db
 from blog.article.views import article
 from blog.user.views import user
 from blog.auth.views import auth, login_manager
-
+import os
 
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = '5os1pc=tyt0%0(krtl_^v4lj_9r2!3ymv1e_-95y-t5g7hk@q2'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    cfg_name = os.environ.get("CONFIG_NAME") or "ProductionConfig"
+    app.config.from_object(f"blog.configs.{cfg_name}")
 
     db.init_app(app)
+    migrate = Migrate(app, db, compare_type=True)
 
     register_blueprints(app)
 
