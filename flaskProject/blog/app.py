@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
+
+from blog.author.views import author
 from blog.models.database import db
 from blog.article.views import article
 from blog.user.views import user
@@ -27,4 +29,5 @@ def register_blueprints(app: Flask):
     app.register_blueprint(user)
     app.register_blueprint(article)
     app.register_blueprint(auth)
+    app.register_blueprint(author)
 
