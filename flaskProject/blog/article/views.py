@@ -1,48 +1,61 @@
-from flask import Blueprint, render_template
-from flask_login import login_required
+from flask import Blueprint, render_template, request, redirect, url_for
+from flask_login import login_required, current_user
+from werkzeug.exceptions import NotFound
 
-from blog.models import User
+from blog.forms.article import CreateArticleForm
+from blog.models import Article, Author
+from blog.models.database import db
 
 article = Blueprint('article', __name__, url_prefix='/articles', static_folder='../static')
 
-ARTICLES = {
-    1: {
-        'title': 'Want to eat)))',
-        'text': 'Want to eat!!!',
-        'author': 1},
-    2: {
-        'title': 'My love',
-        'text': 'I love Dima!!!',
-        'author': 2},
-    3: {
-        'title': 'My dream!))',
-        'text': 'Want to sleep!))',
-        'author': 3},
-}
 
-
-@article.route('/')
-@login_required
+@article.route('/', methods=['GET'])
 def article_list():
+    articles = Article.query.all()
     return render_template(
         'articles/list.html',
-        articles=ARTICLES,
+        articles=articles,
     )
 
 
-@article.route('<int:pk>')
-def get_article(pk: int):
-    article_title = ARTICLES[pk]['title']
-    article_text = ARTICLES[pk]['text']
-    user_id = ARTICLES[pk]['author']
-    # article_author = USERS[ARTICLES[pk]['author']]
-    article_author = User.query.filter_by(id=ARTICLES[pk]['author']).one_or_none()
-    if not article_author:
-        article_author = 'Автор неизвестен'
+@article.route('/<int:article_id>/', methods=['GET'])
+def article_detail(article_id):
+    _article: Article = Article.query.filter_by(id=article_id).one_or_none()
+    if _article is None:
+        raise NotFound
     return render_template(
         'articles/detail.html',
-        article_title=article_title,
-        article_text=article_text,
-        article_author=article_author,
-        user_id=user_id
+        article=_article,
     )
+
+
+
+@article.route('/create', methods=['GET'])
+@login_required
+def create_article_form():
+    form = CreateArticleForm(request.form)
+    return render_template('articles/create.html', form=form)
+
+
+@article.route('/', methods=['POST'])
+@login_required
+def create_article():
+
+    form = CreateArticleForm(request.form)
+
+    if form.validate_on_submit():
+        _article = Article(title=form.title.data.strip(), text=form.text.data)
+
+        if current_user.author:
+            _article.author_id = current_user.author.id
+        else:
+            author = Author(user_id=current_user.id)
+            db.session.add(author)
+            db.session.flush()
+            _article.author_id = author.id
+
+        db.session.add(_article)
+        db.session.commit()
+
+        return redirect(url_for('article.article_detail', article_id=_article.id))
+    return render_template('articles/create.html', form=form)
