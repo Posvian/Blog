@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, ForeignKey, String, Text, DateTime, func
 from sqlalchemy.orm import relationship
 
+from blog.models.article_tag import article_tag_association_table
 from blog.models.database import db
 
 
@@ -20,3 +21,4 @@ class Article(db.Model):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=func.now())
 
     author = relationship('Author', back_populates='articles')
+    tags = relationship('Tag', secondary=article_tag_association_table, back_populates='articles')
