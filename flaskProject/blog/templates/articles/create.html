@@ -9,7 +9,7 @@
     <div class="row">
         <h1>Create article:</h1>
     </div>
-    <form method="POST" action="{{ url_for('article.create_article') }}">
+    <form method="POST" action="{{ url_for('article_bp.create_article') }}">
         {{ form.csrf_token }}
         {% for field in ['title', 'text', 'tags'] %}
             {{ render_field(form[field]) }}

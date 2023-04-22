@@ -2,11 +2,13 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
 
+from blog.admin.admin import admin
 from blog.author.views import author
 from blog.models.database import db
 from blog.article.views import article
 from blog.user.views import user
 from blog.auth.views import auth, login_manager
+# from blog.admin.views import admin_bp
 import os
 
 
@@ -17,6 +19,8 @@ def create_app():
 
     db.init_app(app)
     migrate = Migrate(app, db, compare_type=True)
+
+    admin.init_app(app)
 
     register_blueprints(app)
 
@@ -30,4 +34,5 @@ def register_blueprints(app: Flask):
     app.register_blueprint(article)
     app.register_blueprint(auth)
     app.register_blueprint(author)
+
 
