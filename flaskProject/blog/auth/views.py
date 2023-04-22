@@ -30,7 +30,7 @@ __all__ = [
 @auth.route('/login', methods=['POST', 'GET'], endpoint='login')
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('user.profile', pk=current_user.id))
+        return redirect(url_for('user_bp.profile', pk=current_user.id))
     form = UserAuthForm(request.form)
     errors = []
 
@@ -43,7 +43,7 @@ def login():
             errors.append("invalid email or password")
             return render_template("auth/login.html", form=form, errors=errors)
         login_user(user)
-        return redirect(url_for('user.profile', pk=current_user.id))
+        return redirect(url_for('user_bp.profile', pk=current_user.id))
     return render_template(
         'auth/login.html',
         form=form,

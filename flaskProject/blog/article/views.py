@@ -7,7 +7,7 @@ from blog.forms.article import CreateArticleForm
 from blog.models import Article, Author, Tag
 from blog.models.database import db
 
-article = Blueprint('article', __name__, url_prefix='/articles', static_folder='../static')
+article = Blueprint('article_bp', __name__, url_prefix='/articles', static_folder='../static')
 
 
 @article.route('/', methods=['GET'])
