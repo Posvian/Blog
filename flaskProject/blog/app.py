@@ -3,6 +3,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 
 from blog.admin.admin import admin
+from blog.api import init_api
 from blog.author.views import author
 from blog.models.database import db
 from blog.article.views import article
@@ -25,6 +26,8 @@ def create_app():
     register_blueprints(app)
 
     login_manager.init_app(app)
+
+    api = init_api(app)
 
     return app
 

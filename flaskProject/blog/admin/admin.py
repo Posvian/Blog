@@ -29,6 +29,7 @@ admin = Admin(index_view=CustomAdminIndexView(), name='Blog Admin Panel', templa
 
 class TagAdminView(CustomAdminView):
     column_searchable_list = ('name', )
+    column_list = ('name', 'articles', )
     create_modal = True
     edit_modal = True
 
