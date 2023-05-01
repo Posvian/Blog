@@ -2,7 +2,7 @@ import os
 
 
 class BaseConfig(object):
-    DEBUG = True
+    DEBUG = False
     TESTING = False
     SQLALCHEMY_DATABASE_URI = 'sqlite:///db.sqlite'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -21,4 +21,9 @@ class DevConfig(BaseConfig):
 
 class TestingConfig(BaseConfig):
     TESTING = True
+
+
+class ProductionConfig(BaseConfig):
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
 
